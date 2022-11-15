@@ -17,58 +17,9 @@ app.use(logger("dev"));
 app.use(passport.initialize());
 app.use(express.json());
 
-/*SOCKET*/
 const server = require("http").createServer(app);
+
 const options = { cors: { origin: '*' } };
-const io = require("socket.io")(server, options);
-
-const onlineUsers = [];
-
-const addNewUser = (email, name, socketID) => {
-  !onlineUsers.some((user) => user.email === email) && onlineUsers.push({ email, name, socketID })
-};
-
-const removeUser = (socketID) => {
-  return onlineUsers.forEach((user, index) => {
-    if (user.socketID === socketID) {
-      return onlineUsers.splice(index, 1)
-    }
-  })
-};
-
-io.on("connection", socket => {
-  socket.on('newUser', (user) => {
-    addNewUser(user.email, user.name, socket.id);
-  })
-
-  socket.on('disconnect', () => {
-    removeUser(socket.id)
-  })
-
-  // NOTIFICATION
-  socket.on("notification", (email) => {
-    const userToNot = onlineUsers.find((user) => {
-      return user.email === email
-    });
-
-    if (userToNot) {
-      io.to(userToNot.socketID).emit("not");   
-    }
-  });
-
-  // MESSAGES
-  socket.on("message", (email) => {
-    console.log(onlineUsers);
-    const userToNot = onlineUsers.find((user) => {
-      return user.email === email;
-    });
-
-    if (userToNot) {
-      console.log(userToNot, "entra en el back para emitir msg ");
-      io.to(userToNot.socketID).emit("msg");
-    }
-  });
-});
 
 const routes = require("./config/routes.config");
 app.use("/api", routes);
