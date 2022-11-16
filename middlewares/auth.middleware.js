@@ -5,14 +5,16 @@ module.exports.isAuthenticated = (req, res, next) => {
   const authorization = req.header("Authorization");
 
   if (authorization) {
+    console.log( 'authorization original',authorization)
     const [type, token] = authorization.split(" ");
+    console.log('authorization splited', authorization)
 
     if (type === "Bearer") {
       if (token) {
         let tokenDecode = decodeURI(token);
         console.log("token", token, "tokenDecode", tokenDecode);
         
-        jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
+        jwt.verify(tokenDecode, process.env.JWT_SECRET, (err, decodedToken) => {
           if (err) {
             next(err);
           } else {
