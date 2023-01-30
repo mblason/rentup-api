@@ -16,7 +16,6 @@ module.exports.reserveVisit = (req, res, next) => {
     Visit.find({$and: [{_id: visitId}, {reserved:true}]})
     .then(arr => {
         if(arr.length === 0) {
-            console.log('entra if')
             Visit.find({property: propertyId, userWhoVisits: currentUserId})
             .then((visit) => {
                 if(visit.length === 0) {

@@ -5,9 +5,7 @@ module.exports.isAuthenticated = (req, res, next) => {
   const authorization = req.header("Authorization");
 
   if (authorization) {
-    console.log( 'authorization original',authorization)
     const [type, token] = authorization.split(" ");
-    console.log('authorization splited', authorization)
 
     if (type === "Bearer") {
       if (token) {
